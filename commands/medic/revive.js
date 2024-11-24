@@ -1,5 +1,5 @@
 const { sendLog } = require('../../Events/logFunction');
-
+const config = require('../../config.json'); // Adjust the path as needed
 module.exports = {
     name: 'revive',
     description: 'Revive a player!',
@@ -29,7 +29,9 @@ module.exports = {
         if (Player) {
             const PlayerData = Player.PlayerData;
 
-            emitNet('rsg-medic:client:playerRevive', playerId);
+            // Use the configuration to determine the prefix
+            const medicPrefix = config.QC_Medic ? 'QC-AdvancedMedic' : 'rsg-medic';
+            emitNet(`${medicPrefix}:client:playerRevive`, playerId);
 
             embed.color = 0x00ff00;
             embed.title = '✨ Player Revived Successfully!';
