@@ -5,6 +5,23 @@ const readyEventHandler = require('./Events/ready');
 const RSGCore = exports['rsg-core'].GetCoreObject();
 const axios = require('axios');
 const serverName = GetConvar("sv_hostname", "Set Sv Host Name in Server.CFG")
+const VORPcore = exports['vorp_core'].GetCore();
+
+// Framework detection
+let framework = null;
+try {
+    global.exports['rsg-core'].GetCoreObject();
+    framework = 'rsg-core';
+    console.log("Detected RSG-Core framework.");
+} catch {
+    try {
+        global.exports['vorp_core'].GetCore();
+        framework = 'vorp-core';
+        console.log("Detected VORP-Core framework.");
+    } catch {
+        console.error("No supported framework detected!");
+    }
+}
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS]
@@ -17,7 +34,7 @@ process.on('unhandledRejection', (reason, promise) => {
 client.once('ready', async () => {
     try {
         await readyEventHandler(client);
-        messageHandler(client);
+        messageHandler(client, framework);
         await updatePlayerList();
         setInterval(updatePlayerList, config.AllPlayersEmbed.RefreshTime);
     } catch (error) {

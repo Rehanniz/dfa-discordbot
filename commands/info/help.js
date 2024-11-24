@@ -21,18 +21,24 @@ module.exports = {
         const folders = fs.readdirSync(commandsDir);
 
         for (const folder of folders) {
-            const folderPath = commandsDir + '/' + folder;
-            if (fs.lstatSync(folderPath).isDirectory()) {
-                categories[folder] = [];
-                const commandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith('.js'));
-                for (const file of commandFiles) {
-                    const command = require(folderPath + '/' + file);
-                    if (command.name && command.description) {
-                        categories[folder].push({ name: command.name, description: command.description });
-                    }
-                }
-            }
-        }
+			const folderPath = `${commandsDir}/${folder}`;
+			if (fs.lstatSync(folderPath).isDirectory()) {
+				categories[folder] = [];
+				const commandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith('.js'));
+				for (const file of commandFiles) {
+					// Skip framework-specific commands if framework doesn't match
+					if ((file.startsWith("rsg-") && framework !== 'rsg-core') || 
+						(file.startsWith("vorp-") && framework !== 'vorp-core')) {
+						continue;
+					}
+
+					const command = require(`${folderPath}/${file}`);
+					if (command.name && command.description) {
+						categories[folder].push({ name: command.name, description: command.description });
+					}
+				}
+			}
+		}
 
         const options = [
             {

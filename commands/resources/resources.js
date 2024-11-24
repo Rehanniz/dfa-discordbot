@@ -68,7 +68,7 @@ module.exports = {
             .setDisabled(true);
 
         const nextButton = new MessageButton()
-            .setCustomId('next')
+            .setCustomId('nextpg')
             .setLabel('Next')
             .setEmoji('➡️')
             .setStyle('PRIMARY');
@@ -101,7 +101,7 @@ module.exports = {
         });
 
         collector.on('collect', async (interaction) => {
-            if (interaction.customId === 'next') {
+            if (interaction.customId === 'nextpg') {
                 if (currentPage < pages.length - 1) {
                     currentPage++;
                 }

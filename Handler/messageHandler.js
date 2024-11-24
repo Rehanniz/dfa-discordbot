@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-module.exports = (client) => {
+module.exports = (client, framework) => {
     client.commands = new Map();
 
     const commandFolders = fs.readdirSync(GetResourcePath(GetCurrentResourceName()) + '/commands');
@@ -9,11 +9,15 @@ module.exports = (client) => {
         const commandFiles = fs.readdirSync(GetResourcePath(GetCurrentResourceName()) + '/commands/' + folder).filter(file => file.endsWith('.js'));
         for (const file of commandFiles) {
             const command = require(GetResourcePath(GetCurrentResourceName()) + '/commands/' + folder + '/' + file);
+            // Skip framework-specific commands if framework is not detected
+            if ((file.startsWith("rsg-") && framework !== 'rsg-core') || (file.startsWith("vorp-") && framework !== 'vorp-core')) {
+                continue;
+            }
             client.commands.set(command.name, command);
         }
     }
 
-    client.on('message', async (message) => {
+    client.on('messageCreate', async (message) => {
         if (message.author.bot) return;
 
         const prefix = '!';

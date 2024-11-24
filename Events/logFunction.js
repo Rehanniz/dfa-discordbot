@@ -1,5 +1,8 @@
 
 function sendLog(client, logTitle, logDetails, logColor, fields = []) {
+    if (!client || !client.channels || !client.channels.cache) {
+        return;
+    }
     const logChannel = client.channels.cache.get(config.logChannelId);
     if (!logChannel) {
         console.error(`❌ Log channel with ID ${config.logChannelId} not found.`);
